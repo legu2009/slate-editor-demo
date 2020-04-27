@@ -1,0 +1,38 @@
+@import '../../../css/variables';
+
+.slate-toolbar-color {
+    min-width: auto !important;
+    .slate-dropdown-handler span {
+        width: 36px;
+        padding: 0;
+        overflow: hidden;
+        border-radius: 2px;
+    }
+    .slate-dropdown-handler:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+    .bfi-drop-down {
+        display: none;
+    }
+}
+.slate-color-switch {
+    height: 36px;
+    width: 240px;
+    button {
+        float: left;
+        width: 50%;
+        height: 36px;
+        background-color: transparent;
+        border: none;
+        border-bottom: 1px solid rgba(#fff, 0.1);
+        color: rgba(#fff, 0.5);
+        font-size: 12px;
+        font-weight: normal;
+        text-transform: uppercase;
+        cursor: pointer;
+        &.active {
+            border-bottom-color: #3498db;
+            color: #3498db;
+        }
+    }
+}
