@@ -102,9 +102,37 @@ const Mention = ({ attributes, children, element }) => {
     );
 };
 
-const Element = React.memo((props) => {
+const Table = ({ attributes, children, element }) => {
     const selected = useSelected();
     const focused = useFocused();
+    return (
+        <table className={selected && focused ? 'active' : ''}>
+            <tbody {...attributes}>{children}</tbody>
+        </table>
+    );
+};
+
+const Tr = ({ attributes, children, element }) => {
+    const selected = useSelected();
+    const focused = useFocused();
+    return (
+        <tr className={selected && focused ? 'active' : ''} {...attributes}>
+            {children}
+        </tr>
+    );
+};
+
+const Td = ({ attributes, children, element }) => {
+    const selected = useSelected();
+    const focused = useFocused();
+    return (
+        <td className={selected && focused ? 'active' : ''} {...attributes}>
+            {children}
+        </td>
+    );
+};
+
+const Element = React.memo((props) => {
     let { attributes, children, element } = props;
     let style = {};
     if (element.increase) {
@@ -116,15 +144,11 @@ const Element = React.memo((props) => {
     attributes.style = style;
     switch (true) {
         case element.type === 'table':
-            return (
-                <table className={selected && focused ? 'active': ''}>
-                    <tbody {...attributes}>{children}</tbody>
-                </table>
-            );
-        case element.type === 'table-row' :
-            return <tr className={selected && focused ? 'active': ''} {...attributes}>{children}</tr>;
-        case element.type === 'table-cell' :
-            return <td className={selected && focused ? 'active': ''} {...attributes}>{children}</td>;
+            return <Table {...props} />;
+        case element.type === 'table-row':
+            return <Tr {...props} />;
+        case element.type === 'table-cell':
+            return <Td {...props} />;
         case element.type === 'link':
             return (
                 <a {...attributes} href={element.url}>

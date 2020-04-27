@@ -1,8 +1,8 @@
 {
-  "name": "slate-editor",
+  "name": "slate-editor-demo",
   "version": "0.1.0",
-  "description": "Rich Text Editor Based On slate.js",
-  "main": "dist/index.js",
+  "description": "Rich Text Editor Demo Based On slate.js",
+  "main": "src/editor/index.jsx",
   "author": "legu2009",
   "scripts": {
     "start": "webpack-dev-server --config ./webpack.config.dev.js --progress --colors --host 0.0.0.0"
