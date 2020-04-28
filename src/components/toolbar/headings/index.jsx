@@ -28,7 +28,6 @@ export default React.memo(() => {
     return (
         <DropDown
             caption={names[current]}
-            autoHide={true}
             title="标题"
             arrowActive={true}
             className="slate-toolbar-item slate-toolbar-headings"

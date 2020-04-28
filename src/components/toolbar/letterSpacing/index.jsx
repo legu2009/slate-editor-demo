@@ -15,7 +15,6 @@ export default function LetterSpacing() {
     const [active, setActive] = useState(false);
     return (
         <DropDown
-            autoHide={true}
             title="字间距"
             caption={current}
             className="slate-toolbar-item"

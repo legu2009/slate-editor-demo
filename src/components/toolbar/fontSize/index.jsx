@@ -14,7 +14,6 @@ export default function FontSize() {
     const [active, setActive] = useState(false);
     return (
         <DropDown
-            autoHide={true}
             caption={current}
             title="字号"
             className="slate-toolbar-item"

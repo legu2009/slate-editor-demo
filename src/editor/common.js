@@ -118,41 +118,6 @@ const preventDefault = (e) => {
 
 const withEditor = (editor) => {
     const { insertData, insertText, isVoid, isInline, deleteBackward, deleteForward, insertBreak } = editor;
-
-    /*editor.deleteBackward = (unit) => {
-        const { selection } = editor;
-        if (selection && Range.isCollapsed(selection)) {
-            const [cell] = Editor.nodes(editor, {
-                match: (n) => n.type === 'table-cell'
-            });
-            if (cell) {
-                const [, cellPath] = cell;
-                const start = Editor.start(editor, cellPath);
-                if (Point.equals(selection.anchor, start)) {
-                    return;
-                }
-            }
-        }
-        deleteBackward(unit);
-    };
-
-    editor.deleteForward = (unit) => {
-        const { selection } = editor;
-        if (selection && Range.isCollapsed(selection)) {
-            const [cell] = Editor.nodes(editor, {
-                match: (n) => n.type === 'table-cell'
-            });
-            if (cell) {
-                const [, cellPath] = cell;
-                const end = Editor.end(editor, cellPath);
-                if (Point.equals(selection.anchor, end)) {
-                    return;
-                }
-            }
-        }
-        deleteForward(unit);
-    };
-*/
     editor.insertBreak = () => {
         const { selection: at } = editor;
         if (at) {
@@ -224,8 +189,10 @@ const insertLine = (editor) => {
         });
     } else {
         let anchor = editor.selection.anchor;
+        let path = anchor.path.map((item) => item);
+        path[path.length - 2]++;
         Transforms.select(editor, {
-            path: [anchor.path[0] + 1, anchor.path[1]],
+            path,
             offset: 0
         });
     }

@@ -36,7 +36,6 @@ const SlateEditor = React.memo(({ value, onChange }) => {
                         spellCheck={false}
                         autoFocus
                         onCompositionEnd={(e) => {
-                            //if (editor.marks) {
                             Transforms.setNodes(
                                 editor,
                                 {
@@ -44,15 +43,6 @@ const SlateEditor = React.memo(({ value, onChange }) => {
                                 },
                                 { match: Text.isText }
                             );
-                        }}
-                        onKeyDown={(event) => {
-                            /*for (const hotkey in HOTKEYS) {
-                                if (isHotkey(hotkey, event)) {
-                                    event.preventDefault();
-                                    const mark = HOTKEYS[hotkey];
-                                    toggleMark(editor, mark);
-                                }
-                            }*/
                         }}
                     />
                 </Slate>

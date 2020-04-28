@@ -200,7 +200,7 @@ const AlignBtns = React.memo(() => {
     );
 });
 
-export default React.memo(function ToolBar() {
+export default React.memo(function ToolBar({ getContainerNode }) {
     const editor = useSlate();
     return (
         <div className="slate-toolbar">
@@ -259,7 +259,7 @@ export default React.memo(function ToolBar() {
                 <i className="bfi-code"></i>
             </BlockButton>
             <span className="slate-toolbar-line"></span>
-            <LinkEditor />
+            <LinkEditor getContainerNode={getContainerNode}/>
             <button
                 type="button"
                 key="hr"

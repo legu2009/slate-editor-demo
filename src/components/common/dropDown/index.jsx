@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState, useRef, useEffect } from 'react';
 import './style.less';
 
-const DropDown = React.memo(({ disabled, className, title, autoHide, caption, children, active, onActiveChange, isMousePrevent = true }) => {
+const DropDown = React.memo(({ disabled, className, title, caption, children, active, onActiveChange, isMousePrevent = true }) => {
     const handlerInstance = useRef(null);
     const contentInstance = useRef(null);
 
@@ -15,15 +15,15 @@ const DropDown = React.memo(({ disabled, className, title, autoHide, caption, ch
     };
 
     useEffect(() => {
-        let registerClickEvent = event => {
+        let listener = event => {
             if (contentInstance.current.contains(event.target) || handlerInstance.current.contains(event.target)) {
                 return false;
             }
-            autoHide && onActiveChange(false);
+            onActiveChange(false);
         };
-        document.body.addEventListener('click', registerClickEvent);
+        document.body.addEventListener('click', listener);
         return () => {
-            document.body.removeEventListener('click', registerClickEvent);
+            document.body.removeEventListener('click', listener);
         };
     }, []);
 

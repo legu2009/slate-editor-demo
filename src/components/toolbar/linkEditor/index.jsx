@@ -58,7 +58,7 @@ const wrapLink = (editor, { url, target }, flag) => {
     }
 };
 
-export default function LinkEditor() {
+export default function LinkEditor({ getContainerNode }) {
     const caption = <i className="bfi-link"></i>;
     const [url, setUrl] = useState('');
     const [target, setTarget] = useState(false);
@@ -100,10 +100,11 @@ export default function LinkEditor() {
     };
     const onDropDownHide = () => {
         if (isNewLink.current) {
-            Transforms.setSelection(editor, tmpSelection.current);
+            Transforms.select(editor, tmpSelection.current);
             unwrapLink(editor);
             isNewLink.current = false;
         }
+        getContainerNode().querySelector('.slate-content').focus();
     };
     const setActive = (_active) => {
         if (active === _active) return;
@@ -116,31 +117,21 @@ export default function LinkEditor() {
     };
     const onCancel = (e) => {
         e.preventDefault();
-        if (tmpSelection.current) {
-            //Transforms.select(editor, tmpSelection.current);
-            Transforms.setSelection(editor, tmpSelection.current);
-        }
-        if (isNewLink.current) {
-            unwrapLink(editor);
-            isNewLink.current = false;
-        }
         setActive(false);
     };
     const onConfirm = (e) => {
         e.preventDefault();
         if (!url) return onCancel(e);
-        if (tmpSelection.current) {
-            Transforms.setSelection(editor, tmpSelection.current);
-            editor.selection = tmpSelection.current;
-            insertLink(
-                editor,
-                {
-                    url,
-                    target: target ? '_blank' : ''
-                },
-                true
-            );
-        }
+        Transforms.select(editor, tmpSelection.current);
+        editor.selection = tmpSelection.current;
+        insertLink(
+            editor,
+            {
+                url,
+                target: target ? '_blank' : ''
+            },
+            true
+        );
         isNewLink.current = false;
         setActive(false);
     };

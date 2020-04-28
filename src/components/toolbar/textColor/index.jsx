@@ -41,7 +41,6 @@ export default function TextColor() {
     return (
         <DropDown
             caption={<i className="bfi-text-color" style={{ backgroundColor: bgColor, color: fontColor }} />}
-            autoHide={true}
             className={'slate-toolbar-item slate-toolbar-color'}
             title="颜色"
             active={active}

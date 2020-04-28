@@ -15,7 +15,6 @@ export default function LineHeight() {
     const [active, setActive] = useState(false);
     return (
         <DropDown
-            autoHide={true}
             caption={current}
             title="行高"
             className="slate-toolbar-item"
