@@ -200,10 +200,10 @@ const Leaf = React.memo((props) => {
         style.backgroundColor = leaf.backgroundColor;
     }
     if (leaf.superscript) {
-        style.verticalAlign = 'super';
+        attributes.className = (attributes.className || '') + ' slate-sup';
     }
     if (leaf.subscript) {
-        style.verticalAlign = 'sub';
+        attributes.className = (attributes.className || '') + ' slate-sub';
     }
     let textDecoration = [];
     if (leaf.underline) {
