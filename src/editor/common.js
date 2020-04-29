@@ -1,7 +1,5 @@
-import React, { useCallback, useMemo, useState, useRef } from 'react';
+
 import { Editor, Transforms, Range, Point } from 'slate';
-
-
 
 const WRAP_TYPES = [
     {

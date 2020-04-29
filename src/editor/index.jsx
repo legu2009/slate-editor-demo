@@ -22,12 +22,12 @@ const SlateEditor = React.memo(({ className: _className, value, onChange, plugin
                 setClassName(fn);
                 editor.className = fn;
             } else {
-                setClassName(name => {
+                setClassName((name) => {
                     editor.className = fn(name);
                     return editor.className;
                 });
             }
-        }
+        };
         return editor;
     }, []);
     const containerNode = useRef(null);
@@ -58,59 +58,6 @@ const SlateEditor = React.memo(({ className: _className, value, onChange, plugin
         </div>
     );
 });
-
-const Mention = ({ attributes, children, element }) => {
-    const selected = useSelected();
-    const focused = useFocused();
-    return (
-        <span
-            {...attributes}
-            contentEditable={false}
-            style={{
-                padding: '3px 3px 2px',
-                margin: '0 1px',
-                verticalAlign: 'baseline',
-                display: 'inline-block',
-                borderRadius: '4px',
-                backgroundColor: '#eee',
-                fontSize: '0.9em',
-                boxShadow: selected && focused ? '0 0 0 2px #B4D5FF' : 'none'
-            }}>
-            @{element.character}
-            {children}
-        </span>
-    );
-};
-
-const Table = ({ attributes, children, element }) => {
-    const selected = useSelected();
-    const focused = useFocused();
-    return (
-        <table className={selected && focused ? 'active' : ''}>
-            <tbody {...attributes}>{children}</tbody>
-        </table>
-    );
-};
-
-const Tr = ({ attributes, children, element }) => {
-    const selected = useSelected();
-    const focused = useFocused();
-    return (
-        <tr className={selected && focused ? 'active' : ''} {...attributes}>
-            {children}
-        </tr>
-    );
-};
-
-const Td = ({ attributes, children, element }) => {
-    const selected = useSelected();
-    const focused = useFocused();
-    return (
-        <td className={selected && focused ? 'active' : ''} {...attributes}>
-            {children}
-        </td>
-    );
-};
 
 const Element = React.memo((props) => {
     let { attributes, children, element, plugins } = props;
