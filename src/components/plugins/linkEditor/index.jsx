@@ -80,7 +80,7 @@ const wrapLink = (editor, { url, target }, flag) => {
     }
 };
 
-const LinkEditor = function LinkEditor({ getContainerNode }) {
+const LinkEditor = function LinkEditor({ getContainerNode, config }) {
     const caption = <i className="bfi-link"></i>;
     const [url, setUrl] = useState('');
     const [target, setTarget] = useState(false);
@@ -166,7 +166,7 @@ const LinkEditor = function LinkEditor({ getContainerNode }) {
         <>
             <DropDown
                 caption={caption}
-                title="链接"
+                title={config.title.button}
                 autoHide={true}
                 className="slate-toolbar-item slate-toolbar-link"
                 isMousePrevent={false}
@@ -178,28 +178,28 @@ const LinkEditor = function LinkEditor({ getContainerNode }) {
                             type="text"
                             value={url}
                             spellCheck={false}
-                            placeholder={'输入链接地址'}
+                            placeholder={config.title.url}
                             onKeyDown={onInputKeyDown}
                             onChange={onInputChange}
                         />
                     </div>
                     <div className="toolbar-link-switch">
                         <Switch active={target ? '_blank' : ''} onClick={onSwitchChange} />
-                        <label>新窗口打开</label>
+                        <label>{config.title.target}</label>
                     </div>
                     <div className="toolbar-link-buttons">
                         <button type="button" onMouseDown={onConfirm} className="slate-button primary fr">
-                            确定
+                        {config.title.confirm}
                         </button>
                         <button type="button" onMouseDown={onCancel} className="slate-button fr">
-                            取消
+                        {config.title.cancel}
                         </button>
                     </div>
                 </>
             </DropDown>
             <button
                 type="button"
-                data-title="清除链接"
+                data-title={config.title.unwrap}
                 disabled={!isActive}
                 className="slate-toolbar-item"
                 onMouseDown={(e) => {
@@ -214,6 +214,16 @@ const LinkEditor = function LinkEditor({ getContainerNode }) {
 
 export default {
     key: 'linkEditor',
+    config: {
+        title: {
+            button: '链接',
+            url: '输入链接地址',
+            target: '新窗口打开',
+            confirm: '确定',
+            cancel: '取消',
+            unwrap: '清除链接'
+        }
+    },
     withEditor: (editor) => {
         const { insertData, insertText, isInline } = editor;
         editor.isInline = (element) => {

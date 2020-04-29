@@ -6,6 +6,7 @@ import { useSlate } from 'slate-react';
 export default {
     key: 'letterSpacing',
     config: {
+        title: '字间距',
         letterSpacings: [0, 1, 2, 3, 4, 5, 6]
     },
     ToolbarButton: function LetterSpacing({ config }) {
@@ -19,7 +20,7 @@ export default {
         const [active, setActive] = useState(false);
         return (
             <DropDown
-                title="字间距"
+                title={config.title}
                 caption={current}
                 className="slate-toolbar-item"
                 active={active}

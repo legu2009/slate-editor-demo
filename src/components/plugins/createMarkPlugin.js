@@ -20,8 +20,9 @@ const MarkButton = React.memo(({ children, title, format, otherFormat }) => {
 });
 
 export default ({ format, title, otherFormat, config, processLeaf, icon }) => {
+    config = config || {};
+    config.title = title;
     return {
-        key: format,
         config,
         ToolbarButton: () => {
             return (

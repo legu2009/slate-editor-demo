@@ -24,7 +24,7 @@ function TextColor({ config }) {
         <DropDown
             caption={<i className="bfi-text-color" style={{ backgroundColor: bgColor, color: fontColor }} />}
             className={'slate-toolbar-item slate-toolbar-color'}
-            title="颜色"
+            title={config.title.button}
             active={active}
             onActiveChange={setActive}>
             <>
@@ -36,7 +36,7 @@ function TextColor({ config }) {
                             e.preventDefault();
                             setColorType('color');
                         }}>
-                        文字颜色
+                        {config.title.fontColor}
                     </button>
                     <button
                         type="button"
@@ -45,7 +45,7 @@ function TextColor({ config }) {
                             e.preventDefault();
                             setColorType('backgroundColor');
                         }}>
-                        背景颜色
+                        {config.title.bgColor}
                     </button>
                 </div>
                 <ColorPicker
@@ -66,6 +66,11 @@ function TextColor({ config }) {
 export default {
     key: 'textColor',
     config: {
+        title: {
+            button: '颜色',
+            fontColor: '文字颜色',
+            bgColor: '背景颜色'
+        },
         colors: [
             '#000000',
             '#333333',

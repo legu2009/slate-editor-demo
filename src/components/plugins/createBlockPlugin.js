@@ -20,8 +20,9 @@ const BlockButton = React.memo(({ children, title, format, otherFormat }) => {
 });
 
 export default ({ format, title, otherFormat, config, processElement, icon }) => {
+    config = config || {};
+    config.title = title;
     return {
-        key: format,
         config,
         ToolbarButton: () => {
             return (

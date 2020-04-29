@@ -20,7 +20,7 @@ const Headings = React.memo(({ config }) => {
     return (
         <DropDown
             caption={names[current]}
-            title="标题"
+            title={config.title}
             arrowActive={true}
             className="slate-toolbar-item slate-toolbar-headings"
             active={active}
@@ -50,6 +50,7 @@ export default {
     key: 'headings',
     config: {
         headings: ['header-1', 'header-2', 'header-3', 'header-4', 'header-5', 'header-6', 'header-0'],
+        title: '标题',
         names: {
             'header-1': '标题1',
             'header-2': '标题2',

@@ -4,10 +4,16 @@ import { withHistory } from 'slate-history';
 
 export default {
     key: 'history',
+    config: {
+        title: {
+            undo: '撤销',
+            redo: '重做'
+        }
+    },
     withEditor: (editor) => {
         return withHistory(editor);
     },
-    ToolbarButton: React.memo(() => {
+    ToolbarButton: React.memo(({ config }) => {
         const editor = useSlate();
         const history = editor.history;
         return (
@@ -16,7 +22,7 @@ export default {
                     type="button"
                     key="undo"
                     disabled={history.undos.length < 2}
-                    data-title="撤销"
+                    data-title={config.title.undo}
                     className="slate-toolbar-item"
                     onMouseDown={(e) => {
                         e.preventDefault();
@@ -28,7 +34,7 @@ export default {
                     type="button"
                     key="redo"
                     disabled={history.redos.length === 0}
-                    data-title="重做"
+                    data-title={config.title.redo}
                     className="slate-toolbar-item"
                     onMouseDown={(e) => {
                         e.preventDefault();

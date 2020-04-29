@@ -4,7 +4,7 @@ import { Editable, withReact, useSlate, Slate, useSelected, useFocused } from 's
 import { Editor, Transforms, createEditor, Range, Point } from 'slate';
 import classnames from 'classnames';
 
-const IndentBtns = React.memo(() => {
+const IndentBtns = React.memo(({ config }) => {
     const editor = useSlate();
     let increase = 0;
     const [match] = Editor.nodes(editor, {
@@ -18,7 +18,7 @@ const IndentBtns = React.memo(() => {
             <button
                 type="button"
                 key="indent-increase"
-                data-title="增加缩进"
+                data-title={config.title.increase}
                 className="slate-toolbar-item"
                 onMouseDown={(e) => {
                     e.preventDefault();
@@ -32,7 +32,7 @@ const IndentBtns = React.memo(() => {
                 type="button"
                 key="indent-decrease"
                 disabled={increase === 0}
-                data-title="减少缩进"
+                data-title={config.title.decrease}
                 className="slate-toolbar-item"
                 onMouseDown={(e) => {
                     e.preventDefault();
@@ -46,7 +46,7 @@ const IndentBtns = React.memo(() => {
     );
 });
 
-const AlignBtns = React.memo(() => {
+const AlignBtns = React.memo(({ config }) => {
     const editor = useSlate();
     let align = 'left';
     const [match] = Editor.nodes(editor, {
@@ -67,8 +67,8 @@ const AlignBtns = React.memo(() => {
         <>
             <button
                 type="button"
-                key="left"
-                data-title="居左"
+                key="align-left"
+                data-title={config.title.left}
                 className={classnames('slate-toolbar-item', { active: align === 'left' })}
                 onMouseDown={getClickFn('left')}>
                 <i className="bfi-align-left"></i>
@@ -76,7 +76,7 @@ const AlignBtns = React.memo(() => {
             <button
                 type="button"
                 key="align-center"
-                data-title="居中"
+                data-title={config.title.center}
                 className={classnames('slate-toolbar-item', { active: align === 'center' })}
                 onMouseDown={getClickFn('center')}>
                 <i className="bfi-align-center"></i>
@@ -84,7 +84,7 @@ const AlignBtns = React.memo(() => {
             <button
                 type="button"
                 key="align-right"
-                data-title="居右"
+                data-title={config.title.right}
                 className={classnames('slate-toolbar-item', { active: align === 'right' })}
                 onMouseDown={getClickFn('right')}>
                 <i className="bfi-align-right"></i>
@@ -92,7 +92,7 @@ const AlignBtns = React.memo(() => {
             <button
                 type="button"
                 key="align-justify"
-                data-title="两端"
+                data-title={config.title.justify}
                 className={classnames('slate-toolbar-item', { active: align === 'justify' })}
                 onMouseDown={getClickFn('justify')}>
                 <i className="bfi-align-justify"></i>
@@ -172,14 +172,16 @@ const HR = React.memo(({ attributes, children, element }) => {
 
 export default {
     ['format-clear']: {
-        key: 'format-clear',
-        ToolbarButton: () => {
+        config: {
+            title: '清除样式'
+        },
+        ToolbarButton: ({ config }) => {
             const editor = useSlate();
             return (
                 <button
                     type="button"
                     key="format-clear"
-                    data-title="清除样式"
+                    data-title={config.title}
                     className="slate-toolbar-item"
                     onMouseDown={(e) => {
                         e.preventDefault();
@@ -191,7 +193,12 @@ export default {
         }
     },
     indent: {
-        key: 'indent',
+        config: {
+            title: {
+                increase: '增加缩进',
+                decrease: '减少缩进'
+            }
+        },
         ToolbarButton: IndentBtns,
         processElement: ({ attributes, children, element }) => {
             if (element.increase) {
@@ -200,7 +207,14 @@ export default {
         }
     },
     align: {
-        key: 'align',
+        config: {
+            title: {
+                left: '居左',
+                center: '居中',
+                right: '居右',
+                justify: '两端'
+            }
+        },
         ToolbarButton: AlignBtns,
         processElement: ({ attributes, children, element }) => {
             if (element.align) {
@@ -209,7 +223,9 @@ export default {
         }
     },
     hr: {
-        key: 'hr',
+        config: {
+            title: '水平线'
+        },
         withEditor: (editor) => {
             const { isVoid } = editor;
             editor.isVoid = (element) => {
@@ -217,13 +233,13 @@ export default {
             };
             return editor;
         },
-        ToolbarButton: () => {
+        ToolbarButton: ({ config }) => {
             const editor = useSlate();
             return (
                 <button
                     type="button"
                     key="hr"
-                    data-title="水平线"
+                    data-title={config.title}
                     className="slate-toolbar-item"
                     onMouseDown={(e) => {
                         e.preventDefault();
@@ -240,14 +256,16 @@ export default {
         }
     },
     ['clear-all']: {
-        key: 'clear-all',
-        ToolbarButton: () => {
+        config: {
+            title: '清除内容'
+        },
+        ToolbarButton: ({ config }) => {
             const editor = useSlate();
             return (
                 <button
                     type="button"
                     key="clear-all"
-                    data-title="清除内容"
+                    data-title={config.title}
                     className="slate-toolbar-item"
                     onMouseDown={(e) => {
                         e.preventDefault();
@@ -259,14 +277,20 @@ export default {
         }
     },
     ['fullscreen']: {
-        key: 'fullscreen',
-        ToolbarButton: () => {
+        config: {
+            title: {
+                fullscreen: '全屏',
+                exit: '退出全屏'
+            }
+        },
+        ToolbarButton: ({ config }) => {
             const editor = useSlate();
             const isFull = editor.className.indexOf('fullscreen') !== -1;
             return (
                 <button
                     type="button"
-                    data-title={isFull ? '退出全屏' : '全屏'}
+                    key="fullscreen"
+                    data-title={isFull ? config.title.exit : config.title.fullscreen}
                     className="slate-toolbar-item"
                     onMouseDown={(e) => {
                         e.preventDefault();
