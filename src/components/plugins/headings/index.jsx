@@ -5,21 +5,13 @@ import { Editor, Transforms, createEditor, Range } from 'slate';
 import { preventDefault, toggleBlock } from '../../../editor/common.js';
 import './style.less';
 
-export default React.memo(() => {
+const Headings = React.memo(({ config }) => {
     const editor = useSlate();
-    const headings = ['header-1', 'header-2', 'header-3', 'header-4', 'header-5', 'header-6', 'header-0'];
-    const names = {
-        'header-1': '标题1',
-        'header-2': '标题2',
-        'header-3': '标题3',
-        'header-4': '标题4',
-        'header-5': '标题5',
-        'header-6': '标题6',
-        'header-0': '常规'
-    };
+    const headings = config.headings;
+    const names = config.names;
     let current = 'header-0';
     const [match] = Editor.nodes(editor, {
-        match: n => n.type && n.type.indexOf('header-') === 0
+        match: (n) => n.type && n.type.indexOf('header-') === 0
     });
     if (match && match[0]) {
         current = match[0].type;
@@ -40,7 +32,7 @@ export default React.memo(() => {
                         <li
                             key={index}
                             className={`slate-headings-head${headSize} ` + (current === item ? 'active' : '')}
-                            onMouseDown={e => {
+                            onMouseDown={(e) => {
                                 e.preventDefault();
                                 toggleBlock(editor, item);
                                 setActive(false);
@@ -53,3 +45,28 @@ export default React.memo(() => {
         </DropDown>
     );
 });
+
+export default {
+    key: 'headings',
+    config: {
+        headings: ['header-1', 'header-2', 'header-3', 'header-4', 'header-5', 'header-6', 'header-0'],
+        names: {
+            'header-1': '标题1',
+            'header-2': '标题2',
+            'header-3': '标题3',
+            'header-4': '标题4',
+            'header-5': '标题5',
+            'header-6': '标题6',
+            'header-0': '常规'
+        }
+    },
+    ToolbarButton: Headings,
+    processElement: ({ attributes, children, element }) => {
+        if (element.type.indexOf('header-') === 0) {
+            let headSize = element.type.replace('header-', '');
+            if (headSize !== '0') {
+                return React.createElement('h' + headSize, attributes, children);
+            }
+        }
+    }
+};

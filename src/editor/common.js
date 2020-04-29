@@ -1,32 +1,7 @@
 import React, { useCallback, useMemo, useState, useRef } from 'react';
 import { Editor, Transforms, Range, Point } from 'slate';
-import { wrapLink, unwrapLink } from '../components/toolbar/linkEditor/index';
 
-var protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/;
-var localhostDomainRE = /^localhost[\:?\d]*(?:[^\:?\d]\S*)?$/;
-var nonLocalhostDomainRE = /^[^\s\.]+\.\S{2,}$/;
 
-const isUrl = function (string) {
-    if (typeof string !== 'string') {
-        return false;
-    }
-
-    var match = string.match(protocolAndDomainRE);
-    if (!match) {
-        return false;
-    }
-
-    var everythingAfterProtocol = match[1];
-    if (!everythingAfterProtocol) {
-        return false;
-    }
-
-    if (localhostDomainRE.test(everythingAfterProtocol) || nonLocalhostDomainRE.test(everythingAfterProtocol)) {
-        return true;
-    }
-
-    return false;
-};
 
 const WRAP_TYPES = [
     {
@@ -116,89 +91,11 @@ const preventDefault = (e) => {
     e.preventDefault();
 };
 
-const withEditor = (editor) => {
-    const { insertData, insertText, isVoid, isInline, deleteBackward, deleteForward, insertBreak } = editor;
-    editor.insertBreak = () => {
-        const { selection: at } = editor;
-        if (at) {
-            if (Range.isRange(at) && Range.isCollapsed(at)) {
-                var [entry] = Editor.nodes(editor, {
-                    at: at.path,
-                    match: (n) => Editor.isBlock(editor, n),
-                    mode: 'lowest',
-                    voids: false
-                });
-            }
-        }
-        insertBreak();
-    };
 
-    editor.isVoid = (element) => {
-        return element.type === 'hr' || element.type === 'mention' ? true : isVoid(element);
-    };
-    editor.isInline = (element) => {
-        return element.type === 'link' || element.type === 'mention' ? true : isInline(element);
-    };
 
-    editor.insertText = (text) => {
-        if (text && isUrl(text)) {
-            wrapLink(editor, text);
-        } else {
-            insertText(text);
-        }
-    };
 
-    editor.insertData = (data) => {
-        const text = data.getData('text/plain');
-        if (text && isUrl(text)) {
-            wrapLink(editor, { url: text });
-        } else {
-            insertData(data);
-        }
-    };
 
-    return editor;
-};
-
-const insertLine = (editor) => {
-    let editorEnd = Editor.end(editor, []);
-    let selection = editor.selection;
-    let [selectionStart, selectionEnd] = Range.edges(selection);
-    let isEditorEnd = false;
-    if (selection) {
-        if (Point.equals(editorEnd, selectionEnd)) {
-            isEditorEnd = true;
-        }
-    }
-    if (Point.equals(selectionStart, selectionEnd) && isEditorEnd) {
-        //最后一行
-        if (editorEnd.offset === 0 && editorEnd.path.length === 2 && editorEnd.path[1] === 0) {
-            Transforms.removeNodes(editor, {
-                at: selection
-            });
-        }
-    }
-    Transforms.insertNodes(editor, {
-        type: 'hr',
-        children: [{ text: '' }]
-    });
-    if (isEditorEnd) {
-        Transforms.insertNodes(editor, {
-            type: 'paragraph',
-            children: [{ text: '' }]
-        });
-    } else {
-        let anchor = editor.selection.anchor;
-        let path = anchor.path.map((item) => item);
-        path[path.length - 2]++;
-        Transforms.select(editor, {
-            path,
-            offset: 0
-        });
-    }
-};
-
-const removeLine = (editor) => {
+/*const removeLine = (editor) => {
     Transforms.removeNodes(editor);
 };
 
@@ -276,7 +173,7 @@ const insertTable = (editor) => {
     Transforms.insertNodes(editor, element);
     Transforms.move(editor);
 };
-
+*/
 export {
     isMarkActive,
     isBlockActive,
@@ -284,10 +181,4 @@ export {
     toggleBlock,
     clearMark,
     preventDefault,
-    withEditor,
-    insertLine,
-    removeLine,
-    clearContent,
-    insertMention,
-    insertTable
 };

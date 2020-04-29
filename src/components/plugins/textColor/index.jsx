@@ -3,10 +3,9 @@ import DropDown from '../../common/dropDown';
 import ColorPicker from '../../common/colorPicker';
 import { Editor } from 'slate';
 import { useSlate } from 'slate-react';
-import { preventDefault } from '../../../editor/common.js';
 import './style.less';
 
-export default function TextColor() {
+function TextColor({ config }) {
     const [colorType, setColorType] = useState('color');
     const editor = useSlate();
     const marks = Editor.marks(editor);
@@ -19,24 +18,7 @@ export default function TextColor() {
         bgColor = marks['backgroundColor'];
     }
     let currentColor = colorType === 'color' ? fontColor : bgColor;
-    const colors = [
-        '#000000',
-        '#333333',
-        '#666666',
-        '#999999',
-        '#cccccc',
-        '#ffffff',
-        '#61a951',
-        '#16a085',
-        '#07a9fe',
-        '#003ba5',
-        '#8e44ad',
-        '#f32784',
-        '#c0392b',
-        '#d35400',
-        '#f39c12',
-        '#fdda00'
-    ];
+    const colors = config.colors;
     const [active, setActive] = useState(false);
     return (
         <DropDown
@@ -50,7 +32,7 @@ export default function TextColor() {
                     <button
                         type="button"
                         className={colorType === 'color' ? 'active' : ''}
-                        onMouseDown={e => {
+                        onMouseDown={(e) => {
                             e.preventDefault();
                             setColorType('color');
                         }}>
@@ -59,7 +41,7 @@ export default function TextColor() {
                     <button
                         type="button"
                         className={colorType === 'backgroundColor' ? 'active' : ''}
-                        onMouseDown={e => {
+                        onMouseDown={(e) => {
                             e.preventDefault();
                             setColorType('backgroundColor');
                         }}>
@@ -71,7 +53,7 @@ export default function TextColor() {
                     color={currentColor}
                     disableAlpha={true}
                     presetColors={colors}
-                    onChange={color => {
+                    onChange={(color) => {
                         Editor.addMark(editor, colorType, color);
                         setActive(false);
                     }}
@@ -80,3 +62,36 @@ export default function TextColor() {
         </DropDown>
     );
 }
+
+export default {
+    key: 'textColor',
+    config: {
+        colors: [
+            '#000000',
+            '#333333',
+            '#666666',
+            '#999999',
+            '#cccccc',
+            '#ffffff',
+            '#61a951',
+            '#16a085',
+            '#07a9fe',
+            '#003ba5',
+            '#8e44ad',
+            '#f32784',
+            '#c0392b',
+            '#d35400',
+            '#f39c12',
+            '#fdda00'
+        ]
+    },
+    ToolbarButton: TextColor,
+    processLeaf({ leaf, style }) {
+        if (leaf.color) {
+            style.color = leaf.color;
+        }
+        if (leaf.backgroundColor) {
+            style.backgroundColor = leaf.backgroundColor;
+        }
+    }
+};

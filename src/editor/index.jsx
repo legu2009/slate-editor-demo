@@ -1,70 +1,60 @@
 import React, { useCallback, useMemo, useState, useRef } from 'react';
-import isHotkey from 'is-hotkey';
 import { Editable, withReact, useSlate, Slate, useSelected, useFocused } from 'slate-react';
 import { createEditor, Transforms, Text, Editor } from 'slate';
-import { withHistory } from 'slate-history';
-import { FullContext } from './context.jsx';
+import classnames from 'classnames';
 import Toolbar from '../components/toolbar/index.jsx';
-import { isMarkActive, isBlockActive, toggleMark, toggleBlock, clearMark, withEditor, removeLine } from './common.js';
-
 import '../css/slate-editor.less';
 
-const HOTKEYS = {
-    'mod+b': 'bold',
-    'mod+i': 'italic',
-    'mod+u': 'underline',
-    'mod+`': 'code'
-};
-
-const SlateEditor = React.memo(({ value, onChange }) => {
-    const renderElement = useCallback((props) => <Element {...props} />, []);
-    const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
-    const editor = useMemo(() => withEditor(withHistory(withReact(createEditor()))), []);
-    const [isFull, setIsFull] = useState(false);
+const SlateEditor = React.memo(({ className: _className, value, onChange, plugins = [] }) => {
+    const renderElement = useCallback((props) => <Element {...props} plugins={plugins} />, []);
+    const renderLeaf = useCallback((props) => <Leaf {...props} plugins={plugins} />, []);
+    const [className, setClassName] = useState('');
+    const editor = useMemo(() => {
+        let editor = withReact(createEditor());
+        plugins.forEach((item) => {
+            if (item.withEditor) {
+                editor = item.withEditor(editor);
+            }
+        });
+        editor.className = className;
+        editor.setClassName = (fn) => {
+            if (typeof fn === 'string') {
+                setClassName(fn);
+                editor.className = fn;
+            } else {
+                setClassName(name => {
+                    editor.className = fn(name);
+                    return editor.className;
+                });
+            }
+        }
+        return editor;
+    }, []);
     const containerNode = useRef(null);
     const getContainerNode = useCallback(() => containerNode.current);
-    return (
-        <FullContext.Provider value={{ isFull, setIsFull }}>
-            <div className={'slate-container' + (isFull ? ' fullscreen' : '')} ref={containerNode}>
-                <Slate editor={editor} value={value} onChange={onChange}>
-                    <Toolbar getContainerNode={getContainerNode} />
-                    <Editable
-                        className="slate-content"
-                        renderElement={renderElement}
-                        renderLeaf={renderLeaf}
-                        placeholder="Enter some rich text…"
-                        spellCheck={false}
-                        autoFocus
-                        onCompositionEnd={(e) => {
-                            Transforms.setNodes(
-                                editor,
-                                {
-                                    key: +new Date()
-                                },
-                                { match: Text.isText }
-                            );
-                        }}
-                    />
-                </Slate>
-            </div>
-        </FullContext.Provider>
-    );
-});
 
-const HR = React.memo(({ attributes, children, element }) => {
-    const selected = useSelected();
-    const editor = useSlate();
-    const fn = () => {
-        Transforms.removeNodes(editor);
-    };
     return (
-        <div contentEditable={false} {...attributes}>
-            <div className={'slate-hr' + (selected ? ' active' : '')}>
-                <div className="slate-content-toolbar" onClick={fn}>
-                    <a>&#xe9ac;</a>
-                </div>
-            </div>
-            {children}
+        <div className={classnames('slate-container', _className, className)} ref={containerNode}>
+            <Slate editor={editor} value={value} onChange={onChange}>
+                <Toolbar getContainerNode={getContainerNode} plugins={plugins} />
+                <Editable
+                    className="slate-content"
+                    renderElement={renderElement}
+                    renderLeaf={renderLeaf}
+                    placeholder="Enter some rich text…"
+                    spellCheck={false}
+                    autoFocus
+                    onCompositionEnd={(e) => {
+                        Transforms.setNodes(
+                            editor,
+                            {
+                                key: +new Date()
+                            },
+                            { match: Text.isText }
+                        );
+                    }}
+                />
+            </Slate>
         </div>
     );
 });
@@ -123,104 +113,29 @@ const Td = ({ attributes, children, element }) => {
 };
 
 const Element = React.memo((props) => {
-    let { attributes, children, element } = props;
-    let style = {};
-    if (element.increase) {
-        style['paddingLeft'] = element.increase * 2 + 'em';
-    }
-    if (element.align) {
-        style['textAlign'] = element.align;
-    }
-    attributes.style = style;
-    switch (true) {
-        case element.type === 'table':
-            return <Table {...props} />;
-        case element.type === 'table-row':
-            return <Tr {...props} />;
-        case element.type === 'table-cell':
-            return <Td {...props} />;
-        case element.type === 'link':
-            return (
-                <a {...attributes} href={element.url}>
-                    {children}
-                </a>
-            );
-        case element.type === 'mention':
-            return <Mention {...props} />;
-        case element.type === 'hr':
-            return <HR {...props} />;
-        case element.type === 'block-quote':
-            return <blockquote {...attributes}>{children}</blockquote>;
-        case element.type === 'block-code':
-            return (
-                <pre {...attributes}>
-                    <code>{children}</code>
-                </pre>
-            );
-        case element.type === 'bulleted-list':
-            return (
-                <ul {...attributes} className="slate-ul">
-                    {children}
-                </ul>
-            );
-        case element.type === 'list-item':
-            return <li {...attributes}>{children}</li>;
-        case element.type === 'numbered-list':
-            return (
-                <ol {...attributes} className="slate-ol">
-                    {children}
-                </ol>
-            );
-        case element.type.indexOf('header-') === 0:
-            let headSize = element.type.replace('header-', '');
-            if (headSize !== '0') {
-                return React.createElement('h' + headSize, attributes, children);
+    let { attributes, children, element, plugins } = props;
+    attributes.style = attributes.style || {};
+    let res, item;
+    for (var i = 0, len = plugins.length; i < len; i++) {
+        item = plugins[i];
+        if (item.processElement) {
+            res = item.processElement({ attributes, children, element });
+            if (res) {
+                return res;
             }
-        default:
-            return <div {...attributes}>{children}</div>;
+        }
     }
+    return <div {...attributes}>{children}</div>;
 });
 
 const Leaf = React.memo((props) => {
-    let { attributes, children, leaf } = props;
+    let { attributes, children, leaf, plugins } = props;
     const style = {};
-    if (leaf.fontSize) {
-        style.fontSize = leaf.fontSize;
-    }
-    if (leaf.lineHeight) {
-        style.lineHeight = leaf.lineHeight;
-    }
-    if (leaf.letterSpacing) {
-        style.letterSpacing = leaf.letterSpacing + 'px';
-    }
-    if (leaf.color) {
-        style.color = leaf.color;
-    }
-    if (leaf.backgroundColor) {
-        style.backgroundColor = leaf.backgroundColor;
-    }
-    if (leaf.superscript) {
-        attributes.className = (attributes.className || '') + ' slate-sup';
-    }
-    if (leaf.subscript) {
-        attributes.className = (attributes.className || '') + ' slate-sub';
-    }
-    let textDecoration = [];
-    if (leaf.underline) {
-        textDecoration.push('underline');
-    }
-    if (leaf.strikethrough) {
-        textDecoration.push('line-through');
-    }
-    if (textDecoration.length > 0) {
-        style.textDecoration = textDecoration.join(' ');
-    }
-    if (leaf.bold) {
-        style.fontWeight = 'bold';
-    }
-    if (leaf.italic) {
-        style.fontStyle = 'italic';
-    }
+    plugins.forEach((item) => {
+        if (item.processLeaf) {
+            item.processLeaf({ attributes, children, leaf, style });
+        }
+    });
     if (leaf.key) {
         attributes.key = leaf.key;
     }
