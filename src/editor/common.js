@@ -47,7 +47,7 @@ const clearMark = (editor) => {
     Editor.removeMark(editor, [
         'bold',
         'italic',
-        'underline',
+        'underlined',
         'strikethrough',
         'superscript',
         'subscript',
