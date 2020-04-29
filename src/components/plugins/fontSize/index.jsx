@@ -4,7 +4,6 @@ import { Editor } from 'slate';
 import { useSlate } from 'slate-react';
 
 export default {
-    key: 'fontSizes',
     config: {
         fontSizes: [12, 14, 16, 18, 20, 24, 28, 30, 32, 36, 40, 48, 56, 64, 72, 96, 120, 144],
         title: '字号'
@@ -20,6 +19,7 @@ export default {
         const [active, setActive] = useState(false);
         return (
             <DropDown
+                key={'fontSizes'}
                 caption={current}
                 title={config.title}
                 className="slate-toolbar-item"

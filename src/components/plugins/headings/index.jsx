@@ -19,6 +19,7 @@ const Headings = React.memo(({ config }) => {
     const [active, setActive] = useState(false);
     return (
         <DropDown
+            key={'headings'}
             caption={names[current]}
             title={config.title}
             arrowActive={true}
@@ -47,7 +48,6 @@ const Headings = React.memo(({ config }) => {
 });
 
 export default {
-    key: 'headings',
     config: {
         headings: ['header-1', 'header-2', 'header-3', 'header-4', 'header-5', 'header-6', 'header-0'],
         title: '标题',

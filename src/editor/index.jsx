@@ -3,9 +3,22 @@ import { Editable, withReact, useSlate, Slate, useSelected, useFocused } from 's
 import { createEditor, Transforms, Text, Editor } from 'slate';
 import classnames from 'classnames';
 import Toolbar from '../components/toolbar/index.jsx';
+import pluginMap from '../components/plugins/index.js';
+import merge from 'merge-deep';
 import '../css/slate-editor.less';
 
-const SlateEditor = React.memo(({ className: _className, value, onChange, plugins = [] }) => {
+const SlateEditor = React.memo(({ className: _className, value, onChange, plugins: _plugins }) => {
+    const plugins = useMemo(() => {
+        return _plugins.map((item) => {
+            if (typeof item === 'string') {
+                return pluginMap[item] || item;
+            } else if (pluginMap[item.key]) {
+                return merge(pluginMap[item.key], item);
+            } else {
+                return item;
+            }
+        });
+    }, [_plugins]);
     const renderElement = useCallback((props) => <Element {...props} plugins={plugins} />, []);
     const renderLeaf = useCallback((props) => <Leaf {...props} plugins={plugins} />, []);
     const [className, setClassName] = useState('');
@@ -59,6 +72,43 @@ const SlateEditor = React.memo(({ className: _className, value, onChange, plugin
     );
 });
 
+const defaultPlugins = [
+    'history',
+    'line',
+    'fontSize',
+    'lineHeight',
+    'letterSpacing',
+    'line',
+    'textColor',
+    'bold',
+    'italic',
+    'underlined',
+    'strikethrough',
+    'line',
+    'superscript',
+    'subscript',
+    'format-clear',
+    'line',
+    'indent',
+    'align',
+    'line',
+    'headings',
+    'bulleted-list',
+    'numbered-list',
+    'block-quote',
+    'block-code',
+    'line',
+    'linkEditor',
+    'hr',
+    'clear-all',
+    'line',
+    'fullscreen'
+];
+
+SlateEditor.defaultProps = {
+    plugins: defaultPlugins
+};
+
 const Element = React.memo((props) => {
     let { attributes, children, element, plugins } = props;
     attributes.style = attributes.style || {};
@@ -94,3 +144,4 @@ const Leaf = React.memo((props) => {
 });
 
 export default SlateEditor;
+export { defaultPlugins };

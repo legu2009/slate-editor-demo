@@ -22,6 +22,7 @@ function TextColor({ config }) {
     const [active, setActive] = useState(false);
     return (
         <DropDown
+            key="textColor"
             caption={<i className="bfi-text-color" style={{ backgroundColor: bgColor, color: fontColor }} />}
             className={'slate-toolbar-item slate-toolbar-color'}
             title={config.title.button}
@@ -31,6 +32,7 @@ function TextColor({ config }) {
                 <div className="slate-color-switch">
                     <button
                         type="button"
+                        key="fontColor"
                         className={colorType === 'color' ? 'active' : ''}
                         onMouseDown={(e) => {
                             e.preventDefault();
@@ -40,6 +42,7 @@ function TextColor({ config }) {
                     </button>
                     <button
                         type="button"
+                        key="bgColor"
                         className={colorType === 'backgroundColor' ? 'active' : ''}
                         onMouseDown={(e) => {
                             e.preventDefault();
@@ -64,7 +67,6 @@ function TextColor({ config }) {
 }
 
 export default {
-    key: 'textColor',
     config: {
         title: {
             button: '颜色',

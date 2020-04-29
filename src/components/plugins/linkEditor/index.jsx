@@ -168,6 +168,7 @@ const LinkEditor = function LinkEditor({ getContainerNode, config }) {
                 caption={caption}
                 title={config.title.button}
                 autoHide={true}
+                key={'link'}
                 className="slate-toolbar-item slate-toolbar-link"
                 isMousePrevent={false}
                 active={active}
@@ -198,6 +199,7 @@ const LinkEditor = function LinkEditor({ getContainerNode, config }) {
                 </>
             </DropDown>
             <button
+                key="link-off"
                 type="button"
                 data-title={config.title.unwrap}
                 disabled={!isActive}

@@ -1,5 +1,5 @@
 
-import { Editor, Transforms, Range, Point } from 'slate';
+import { Editor, Transforms } from 'slate';
 
 const WRAP_TYPES = [
     {
@@ -76,7 +76,6 @@ const isBlockActive = (editor, format) => {
     const [match] = Editor.nodes(editor, {
         match: (n) => n.type === format
     });
-
     return !!match;
 };
 
@@ -89,89 +88,6 @@ const preventDefault = (e) => {
     e.preventDefault();
 };
 
-
-
-
-
-/*const removeLine = (editor) => {
-    Transforms.removeNodes(editor);
-};
-
-const clearContent = (editor) => {
-    Transforms.removeNodes(editor, {
-        at: {
-            anchor: Editor.start(editor, []),
-            focus: Editor.end(editor, [])
-        }
-    });
-    Transforms.insertNodes(editor, {
-        type: 'paragraph',
-        children: [{ text: '' }]
-    });
-};
-
-const insertMention = (editor, character) => {
-    const element = { type: 'mention', character, children: [{ text: '' }] };
-    Transforms.insertNodes(editor, element);
-    Transforms.move(editor);
-};
-
-const insertTable = (editor) => {
-    const element = {
-        type: 'paragraph',
-        children: [
-            {
-                type: 'table',
-                children: [
-                    {
-                        type: 'table-row',
-                        children: [
-                            {
-                                type: 'table-cell',
-                                children: [
-                                    {
-                                        type: 'paragraph',
-                                        children: [{ text: '1sfsdfsdfsdf' }]
-                                    }
-                                ]
-                            },
-                            {
-                                type: 'table-cell',
-                                children: [
-                                    {
-                                        type: 'paragraph',
-                                        children: [{ text: '1' }]
-                                    }
-                                ]
-                            },
-                            {
-                                type: 'table-cell',
-                                children: [
-                                    {
-                                        type: 'paragraph',
-                                        children: [{ text: '2' }]
-                                    }
-                                ]
-                            },
-                            {
-                                type: 'table-cell',
-                                children: [
-                                    {
-                                        type: 'paragraph',
-                                        children: [{ text: '3' }]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    };
-    Transforms.insertNodes(editor, element);
-    Transforms.move(editor);
-};
-*/
 export {
     isMarkActive,
     isBlockActive,

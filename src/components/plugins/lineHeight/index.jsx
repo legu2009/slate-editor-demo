@@ -4,7 +4,6 @@ import { Editor } from 'slate';
 import { useSlate } from 'slate-react';
 
 export default {
-    key: 'lineHeight',
     config: {
         lineHeights: [1, 1.2, 1.5, 1.75, 2, 2.5, 3, 4],
         title: '行高'
@@ -22,6 +21,7 @@ export default {
             <DropDown
                 caption={current}
                 title={config.title}
+                key={'lineHeight'}
                 className="slate-toolbar-item"
                 active={active}
                 onActiveChange={setActive}>

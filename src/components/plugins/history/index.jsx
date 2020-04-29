@@ -3,7 +3,6 @@ import { Editable, withReact, useSlate, Slate } from 'slate-react';
 import { withHistory } from 'slate-history';
 
 export default {
-    key: 'history',
     config: {
         title: {
             undo: '撤销',

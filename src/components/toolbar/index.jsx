@@ -4,11 +4,11 @@ import './style.less';
 export default React.memo(function ToolBar({ getContainerNode, plugins }) {
     return (
         <div className="slate-toolbar">
-            {plugins.map((item) => {
+            {plugins.map((item, index) => {
                 if (item === 'line') {
-                    return <span className="slate-toolbar-line"></span>;
+                    return <span key={'line' + index} className="slate-toolbar-line"></span>;
                 }
-                return <item.ToolbarButton config={item.config} getContainerNode={getContainerNode} />;
+                return <item.ToolbarButton key={item.key} config={item.config} getContainerNode={getContainerNode} />;
             })}
         </div>
     );

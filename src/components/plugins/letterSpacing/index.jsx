@@ -4,7 +4,7 @@ import { Editor } from 'slate';
 import { useSlate } from 'slate-react';
 
 export default {
-    key: 'letterSpacing',
+    
     config: {
         title: '字间距',
         letterSpacings: [0, 1, 2, 3, 4, 5, 6]
@@ -22,6 +22,7 @@ export default {
             <DropDown
                 title={config.title}
                 caption={current}
+                key={'letterSpacing'}
                 className="slate-toolbar-item"
                 active={active}
                 onActiveChange={setActive}>
