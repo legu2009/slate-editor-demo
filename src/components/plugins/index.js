@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { isBlockActive, toggleBlock, clearMark } from '../../editor/common.js';
 import { Editable, withReact, useSlate, Slate, useSelected, useFocused } from 'slate-react';
-import { Editor, Transforms, createEditor, Range, Point } from 'slate';
+import { Editor, Transforms, createEditor, Range, Point, Node } from 'slate';
 import classnames from 'classnames';
 import createMarkPlugin from './createMarkPlugin.js';
 import createBlockPlugin from './createBlockPlugin.js';
@@ -142,10 +142,16 @@ const insertLine = (editor) => {
 };
 
 const clearContent = (editor) => {
-    Transforms.removeNodes(editor, {
-        at: {
-            anchor: Editor.start(editor, []),
-            focus: Editor.end(editor, [])
+    Editor.withoutNormalizing(editor, () => {
+        var { path } = Editor.end(editor, []);
+        for (var i = 0; i <= path[0]; i++) {
+            let _path = [0];
+            var [node] = Editor.node(editor, _path);
+            editor.apply({
+                type: 'remove_node',
+                path: _path,
+                node
+            });
         }
     });
     Transforms.insertNodes(editor, {
