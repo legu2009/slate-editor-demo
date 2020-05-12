@@ -29,18 +29,15 @@ const SlateEditor = React.memo(({ className: _className, value, onChange, plugin
                 editor = item.withEditor(editor);
             }
         });
-        editor.className = className;
-        editor.setClassName = (fn) => {
-            if (typeof fn === 'string') {
-                setClassName(fn);
-                editor.className = fn;
-            } else {
-                setClassName((name) => {
-                    editor.className = fn(name);
-                    return editor.className;
-                });
+        Object.defineProperty(editor, 'className', {
+            get() {
+                return className;
+            },
+            set: function (value) {
+                setClassName(value);
             }
-        };
+        });
+
         return editor;
     }, []);
     const containerNode = useRef(null);

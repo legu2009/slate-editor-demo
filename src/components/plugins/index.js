@@ -417,9 +417,9 @@ const pluginMap = {
                     className="slate-toolbar-item"
                     onMouseDown={(e) => {
                         e.preventDefault();
-                        editor.setClassName((className) =>
-                            isFull ? className.replace('fullscreen', '') : className + ' fullscreen'
-                        );
+                        editor.className = isFull
+                            ? editor.className.replace('fullscreen', '')
+                            : editor.className + ' fullscreen';
                     }}>
                     <i className={isFull ? 'bfi-fullscreen-exit' : 'bfi-fullscreen'}></i>
                 </button>
