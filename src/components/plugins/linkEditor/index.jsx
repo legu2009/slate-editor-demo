@@ -97,6 +97,10 @@ const LinkEditor = function LinkEditor({ getContainerNode, config }) {
         setUrl(e.target.value);
     };
     const onDropDownShow = () => {
+        let editorEnd = Editor.end(editor, []);
+        if (!editor.selection) {
+            Transforms.select(editor, {anchor: editorEnd, focus: editorEnd});
+        }
         let selection = (tmpSelection.current = editor.selection);
         isNewLink.current = false;
         const [link] = Editor.nodes(editor, {

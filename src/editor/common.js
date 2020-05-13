@@ -1,5 +1,5 @@
 
-import { Editor, Transforms } from 'slate';
+import { Editor, Transforms, Range, Point } from 'slate';
 
 const WRAP_TYPES = [
     {
@@ -88,7 +88,51 @@ const preventDefault = (e) => {
     e.preventDefault();
 };
 
+
+const blockWithEditor = editor => {
+    const { insertBreak } = editor;
+    editor.__BLOCKS__ = [];
+    editor.insertBreak = () => {
+        const [match] = Editor.nodes(editor, {
+            match: (n) => editor.__BLOCKS__.includes(n.type)
+        });
+        if (match) {
+            let blockPath = match[1];
+            let blockEnd = Editor.end(editor, blockPath);
+            //最后一行是空行
+            if (blockEnd.path[blockEnd.path.length - 1] === 0 && blockEnd.offset === 0) {
+                let selection = editor.selection;
+                if (selection) {
+                    let [, selectionEnd] = Range.edges(selection);
+                    if (Range.isCollapsed(editor.selection) && Point.equals(blockEnd, selectionEnd)) {
+                        let path = blockEnd.path;
+                        path.length--;
+                        Transforms.removeNodes(editor, { at: path });
+                        blockPath[blockPath.length - 1]++;
+                        Transforms.insertNodes(
+                            editor,
+                            {
+                                type: 'paragraph',
+                                children: [{ text: '' }]
+                            },
+                            {
+                                select: true,
+                                at: blockPath
+                            }
+                        );
+                        return;
+                    }
+                }
+            }
+        }
+        insertBreak();
+    };
+    return editor;
+};
+
+
 export {
+    blockWithEditor,
     isMarkActive,
     isBlockActive,
     toggleMark,

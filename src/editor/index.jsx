@@ -1,10 +1,11 @@
 import React, { useCallback, useMemo, useState, useRef } from 'react';
 import { Editable, withReact, useSlate, Slate, useSelected, useFocused } from 'slate-react';
 import { createEditor, Transforms, Text, Editor } from 'slate';
+import merge from 'merge-deep';
 import classnames from 'classnames';
 import Toolbar from '../components/toolbar/index.jsx';
 import pluginMap from '../components/plugins/index.js';
-import merge from 'merge-deep';
+import {blockWithEditor} from './common.js';
 import '../css/slate-editor.less';
 
 const SlateEditor = React.memo(({ className: _className, value, onChange, plugins: _plugins }) => {
@@ -23,8 +24,8 @@ const SlateEditor = React.memo(({ className: _className, value, onChange, plugin
     const renderLeaf = useCallback((props) => <Leaf {...props} plugins={plugins} />, []);
     const [className, setClassName] = useState('');
     const editor = useMemo(() => {
-        let editor = withReact(createEditor());
-        plugins.forEach((item) => {
+        let editor = blockWithEditor(withReact(createEditor()));
+        plugins.forEach(item => {
             if (item.withEditor) {
                 editor = item.withEditor(editor);
             }

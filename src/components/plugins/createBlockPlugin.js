@@ -19,7 +19,7 @@ const BlockButton = React.memo(({ children, title, format, otherFormat }) => {
     );
 });
 
-export default ({ format, title, otherFormat, config, processElement, icon }) => {
+export default ({ format, title, otherFormat, config, processElement, icon, withEditor, ...props }) => {
     config = config || {};
     config.title = title;
     return {
@@ -31,6 +31,14 @@ export default ({ format, title, otherFormat, config, processElement, icon }) =>
                 </BlockButton>
             );
         },
-        processElement
+        processElement,
+        withEditor: (editor) => {
+            editor.__BLOCKS__.push(format);
+            if (withEditor) {
+                return withEditor(editor);
+            }
+            return editor
+        },
+        ...props
     };
 };
