@@ -1,4 +1,3 @@
-
 import { Editor, Transforms, Range, Point } from 'slate';
 
 const WRAP_TYPES = [
@@ -88,10 +87,40 @@ const preventDefault = (e) => {
     e.preventDefault();
 };
 
-
-const blockWithEditor = editor => {
-    const { insertBreak } = editor;
+const blockWithEditor = (editor) => {
+    const { insertBreak, deleteBackward } = editor;
     editor.__BLOCKS__ = [];
+    editor.deleteBackward = () => {
+        const [match] = Editor.nodes(editor, {
+            match: (n) => editor.__BLOCKS__.includes(n.type)
+        });
+        if (match) {
+            let [node, blockPath] = match;
+            let blockStart = Editor.start(editor, blockPath);
+            let blockEnd = Editor.end(editor, blockPath);
+            if (node.children.length === 1 && Point.equals(blockEnd, blockStart)) {
+                let selection = editor.selection;
+                if (selection) {
+                    let [, selectionEnd] = Range.edges(selection);
+                    if (Range.isCollapsed(editor.selection) && Point.equals(blockEnd, selectionEnd)) {
+                        let { path: endPath } = Editor.end(editor, []);
+                        Transforms.removeNodes(editor, {
+                            select: true,
+                            at: blockPath
+                        });
+                        if (endPath[0] === blockPath[0]) {
+                            Transforms.insertNodes(editor, {
+                                type: 'paragraph',
+                                children: [{ text: '' }]
+                            });
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+        deleteBackward();
+    };
     editor.insertBreak = () => {
         const [match] = Editor.nodes(editor, {
             match: (n) => editor.__BLOCKS__.includes(n.type)
@@ -130,13 +159,4 @@ const blockWithEditor = editor => {
     return editor;
 };
 
-
-export {
-    blockWithEditor,
-    isMarkActive,
-    isBlockActive,
-    toggleMark,
-    toggleBlock,
-    clearMark,
-    preventDefault,
-};
+export { blockWithEditor, isMarkActive, isBlockActive, toggleMark, toggleBlock, clearMark, preventDefault };
