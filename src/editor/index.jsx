@@ -5,7 +5,7 @@ import merge from 'merge-deep';
 import classnames from 'classnames';
 import Toolbar from '../components/toolbar/index.jsx';
 import pluginMap from '../components/plugins/index.js';
-import {blockWithEditor} from './common.js';
+import {blockWithEditor, extendWithEditor} from './common.js';
 import '../css/slate-editor.less';
 
 const SlateEditor = React.memo(({ className: _className, value, onChange, plugins: _plugins }) => {
@@ -24,7 +24,7 @@ const SlateEditor = React.memo(({ className: _className, value, onChange, plugin
     const renderLeaf = useCallback((props) => <Leaf {...props} plugins={plugins} />, []);
     const [className, setClassName] = useState('');
     const editor = useMemo(() => {
-        let editor = blockWithEditor(withReact(createEditor()));
+        let editor = extendWithEditor(blockWithEditor(withReact(createEditor())));
         plugins.forEach(item => {
             if (item.withEditor) {
                 editor = item.withEditor(editor);

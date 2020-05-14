@@ -43,7 +43,7 @@ const toggleBlock = (editor, format) => {
 };
 
 const clearMark = (editor) => {
-    Editor.removeMark(editor, [
+    Editor.clearMark(editor, [
         'bold',
         'italic',
         'underlined',
@@ -56,7 +56,6 @@ const clearMark = (editor) => {
         'backgroundColor',
         'letterSpacing'
     ]);
-    editor.marks = null;
 };
 
 const toggleMark = (editor, format, otherFormat) => {
@@ -85,6 +84,24 @@ const isMarkActive = (editor, format) => {
 
 const preventDefault = (e) => {
     e.preventDefault();
+};
+
+const extendWithEditor = (editor) => {
+    Editor.clearMark = (editor, key) => {
+        editor.clearMark(key);
+    }
+    editor.clearMark = (key) => {
+        let selection = editor.selection;
+        if (selection) {
+            if (Range.isExpanded(selection)) {
+                editor.removeMark(key)
+            } else {
+                editor.marks = {};
+                editor.onChange();
+            }
+        }
+    }
+    return editor;
 };
 
 const blockWithEditor = (editor) => {
@@ -159,4 +176,4 @@ const blockWithEditor = (editor) => {
     return editor;
 };
 
-export { blockWithEditor, isMarkActive, isBlockActive, toggleMark, toggleBlock, clearMark, preventDefault };
+export { blockWithEditor, extendWithEditor, isMarkActive, isBlockActive, toggleMark, toggleBlock, clearMark, preventDefault };
